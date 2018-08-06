@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/importantcoding/Grpc/calc/calcpb"
+	"github.com/importantcoding/learning_grpc/calc/calcpb"
 	"google.golang.org/grpc"
 )
 
@@ -36,5 +36,5 @@ func doUnary(c calcpb.CalcServiceClient) {
 	if err != nil {
 		log.Fatalf("Error while calling Calc RPC: %v", err)
 	}
-	log.Printf("Response from Calc: %v", res)
+	log.Printf("Response from Calc: %v", res.Answer)
 }
