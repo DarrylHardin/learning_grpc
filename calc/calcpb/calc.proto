@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package calc;
+option go_package="calcpb";
+
+message Calc {
+    int32 first_number = 1;
+    int32 second_number =2;
+    int32 total_number = 3;
+}
+
+message CalcRequest {
+    Calc calc = 1;
+}
+
+message CalcResponse {
+    int32 result = 1;
+    bool answer = 2;
+}
+
+// from walkthrough, he did not include the first message (why?)
+// message SumRequest {
+//     int32 first_number = 1;
+//     int32 second_number =2;
+// }
+
+// message SumResponse {
+//     int32 sum_result = 1;
+// }
+
+service CalcService{
+    rpc Calc(CalcRequest) returns (CalcResponse) {};
+}
