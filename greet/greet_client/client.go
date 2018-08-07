@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"github.com/importantcoding/learning_grpc/greet/greetpb"
@@ -54,12 +55,12 @@ func doServerStreaming(c greetpb.GreetServiceClient) {
 
 	for {
 		msg, err := resStream.Recv()
-		if msg == nil {
+		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			log.Fatalf("Error with streaming response: %v", err)
 		}
-		log.Printf("Response from streaming server Greet: %v", msg)
+		log.Printf("Response from streaming server Greet: %v", msg.GetResult())
 	}
 }
