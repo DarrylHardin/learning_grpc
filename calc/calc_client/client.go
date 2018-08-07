@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"github.com/importantcoding/learning_grpc/calc/calcpb"
@@ -20,7 +21,8 @@ func main() {
 
 	c := calcpb.NewCalcServiceClient(cc)
 	fmt.Printf("Created client: %f", c)
-	doUnary(c)
+	// doUnary(c)
+	doServerStream(c)
 }
 
 func doUnary(c calcpb.CalcServiceClient) {
@@ -37,4 +39,27 @@ func doUnary(c calcpb.CalcServiceClient) {
 		log.Fatalf("Error while calling Calc RPC: %v", err)
 	}
 	log.Printf("Response from Calc: %v", res.Answer)
+}
+
+func doServerStream(c calcpb.CalcServiceClient) {
+	fmt.Println("Starting ServerStream RPC...")
+	req := &calcpb.PrimeNumbersDecompRequest{
+		Number: 120000,
+	}
+	res, err := c.PrimeNumbersDecomp(context.Background(), req)
+	if err != nil {
+		log.Fatalf("Error while calling Calc RPC: %v", err)
+	}
+
+	for {
+		msg, err := res.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalf("Error while calling Calc RPC: %v", err)
+		}
+
+		log.Printf("Prime Factor: %v", msg)
+	}
 }

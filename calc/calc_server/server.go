@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/importantcoding/learning_grpc/calc/calcpb"
 	"google.golang.org/grpc"
@@ -30,6 +31,29 @@ func (*server) Calc(ctx context.Context, req *calcpb.CalcRequest) (*calcpb.CalcR
 		Answer: answer,
 	}
 	return res, nil
+}
+
+func (*server) PrimeNumbersDecomp(req *calcpb.PrimeNumbersDecompRequest, stream calcpb.CalcService_PrimeNumbersDecompServer) error {
+	fmt.Printf("PrimeNumbersDecomp was invoked with %v\n", req)
+	firstNumber := req.GetNumber()
+	var k int32
+	k = 2
+	n := firstNumber
+	for n > 1 {
+		if n%k == 0 { // if k evenly divides into N
+			var resStream *calcpb.PrimeNumbersDecompResponse
+			resStream = &calcpb.PrimeNumbersDecompResponse{
+				Answer: k,
+			}
+			stream.Send(resStream)
+			time.Sleep(1000 * time.Millisecond)
+			n = n / k // divide N by k so that we have the rest of the number left.
+		} else {
+			k = k + 1
+		}
+
+	}
+	return nil
 }
 
 func main() {
